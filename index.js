@@ -16,7 +16,8 @@ pit.src = './assets/pit.jpg';
 stink.src = './assets/stink.png';
 wumpus.src = './assets/wumpus.png';
 ctx.fillStyle="grey"
-const wumpusPos={x:3,y:0}
+const wumpusPos={x:3,y:1}
+const pitPos={x:2,y:3}
 ctx.fillRect(0,0,canvas.width,canvas.height)
 const position={x:0,y:3}
 // Draw the grid
@@ -32,7 +33,7 @@ for (let y = 0; y <= canvas.height; y += cellSize) {
 
 ctx.strokeStyle = 'black';
 ctx.stroke();
-stink.onload=()=>ctx.drawImage(stink,100,100,100,100)
+
 
 dude.onload = function() {
     ctx.drawImage(dude, 0, position.y*cellSize, cellSize, cellSize);}
@@ -44,17 +45,19 @@ function clearPrevious(x,y) {
     }
 
 function putWumpus(){
-    wumpus.onload=()=>ctx.drawImage(wumpus,wumpusPos.x*cellSize,wumpusPos.y*cellSize,cellSize,cellSize)
+    ctx.drawImage(wumpus, wumpusPos.x * cellSize, wumpusPos.y * cellSize, cellSize, cellSize);
     
-    if(wumpusPos.x<3)
-        putStink(wumpusPos.x+1,wumpusPos.y)
-    if(wumpusPos.x!=0)
-        putStink(wumpusPos.x-1,wumpusPos.y)
-    if(wumpusPos.y<3)
-        putStink(wumpusPos.x,wumpusPos.y+1)
-    if(wumpusPos.y!=0)
-        putStink(wumpusPos.x,wumpusPos.y-1)
+    if (wumpusPos.x < 3)
+        putStink(wumpusPos.x + 1, wumpusPos.y);
+    if (wumpusPos.x != 0)
+        putStink(wumpusPos.x - 1, wumpusPos.y);
+    if (wumpusPos.y < 3)
+        putStink(wumpusPos.x, wumpusPos.y + 1);
+    if (wumpusPos.y != 0)
+        putStink(wumpusPos.x, wumpusPos.y - 1);
 }
+
+wumpus.onload = putWumpus;
 
 
 const putStink=(x,y)=>{
