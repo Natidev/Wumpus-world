@@ -1,10 +1,13 @@
 const canvas = document.getElementsByTagName('canvas')[0];
+const text=document.getElementsByTagName("p")[0]
+
 const ctx = canvas.getContext('2d',{willReadFrequently:true});
 const gridSize = 4;
 const cellSize = canvas.width / gridSize;
 let stinkSet=new Set()
 let breezeSet=new Set()
 const gold = new Image();
+const goldPos={x:1,y:0}
 const wumpus = new Image();
 const stink = new Image();
 const breeze = new Image();
@@ -19,43 +22,47 @@ wumpus.src = './assets/wumpus.png';
 ctx.fillStyle="grey"
 const wumpusPos={x:3,y:1}
 const pitPos={x:2,y:3}
-ctx.fillRect(0,0,canvas.width,canvas.height)
+
 const position={x:0,y:3}
 // Draw the grid
-for (let x = 0; x <= canvas.width; x += cellSize) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, canvas.height);
-}
-
-for (let y = 0; y <= canvas.height; y += cellSize) {
-    ctx.moveTo(0, y);
-    ctx.lineTo(canvas.width, y);
-}
 
 ctx.strokeStyle = 'black';
 ctx.stroke();
+let previousState={on:false,x:0,y:0,type:"n"}
+const checkPreviousState=()=>{
+    if(previousState.on){
+        if(previousState.type=="s")
+            putStink(previousState.x,previousState.y)
+        else
+            putPit(previousState.x,previousState.y)
+    }
+    previousState.on=false
+}
 const validateMove=()=>{
-    console.log(position,wumpusPos)
-    console.log(position==wumpusPos);
+    checkPreviousState()
     
     if(position.x==wumpusPos.x && position.y==wumpusPos.y)
         alert("You got Eaten")
-    else if (position.x==wumpusPos.x && position.y==wumpusPos.y)
+    else if (position.x==goldPos.x && position.y==goldPos.y)
+        alert("You found Gold !! \n You have won")
+    else if (position.x==pitPos.x && position.y==pitPos.y)
         alert("Falled into a pit")
-    else if(stinkSet.has(position))
-        alert("Wumpus is close")
-    else if(breezeSet.has(position))
-        alert("Pit nearby")
+    else if([...stinkSet].some(pos => pos.x === position.x && pos.y === position.y)) {
+        previousState={on:true,x:position.x,y:position.y,type:"s"}
+        
+        text.innerText="There is a Wumpus Nearby"
+    } else if([...breezeSet].some(pos => pos.x === position.x && pos.y === position.y)) {
+        previousState={on:true,x:position.x,y:position.y,type:"w"}
+        text.innerText="There is a pit Nearby"
+    }else {
+        text.innerText="Safe State"
+    }
+       
 }
-gold.onload=()=>ctx.drawImage(gold,2*cellSize,0*cellSize,cellSize,cellSize)
+
 dude.onload = function() {
     ctx.drawImage(dude, 0, position.y*cellSize, cellSize, cellSize);}
-    function clearPreviousA(x,y) {
-        ctx.clearRect(x * cellSize, y * cellSize, cellSize, cellSize);
-        drawGrid();
-        putWumpus();
-        putPit();
-    }
+
     function clearPrevious() {
             ctx.clearRect(position.x * cellSize, position.y * cellSize, cellSize, cellSize);
             
@@ -93,7 +100,7 @@ const putBreeze = (x, y) => {
 
 pit.onload = putPit;
 wumpus.onload = putWumpus;
-
+gold.onload=()=>ctx.drawImage(gold,goldPos.x*cellSize,goldPos.y*cellSize,cellSize,cellSize)
 
 const putStink=(x,y)=>{
     stinkSet.add({x:x,y:y})
@@ -151,4 +158,16 @@ document.addEventListener('keydown', function(event) {
             break;
     }
 });
-putWumpus()
+
+for (let x = 0; x <= canvas.width; x += cellSize) {
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+}
+
+for (let y = 0; y <= canvas.height; y += cellSize) {
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+}
+
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0,0,canvas.width,canvas.height)
