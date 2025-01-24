@@ -32,19 +32,20 @@ let previousState={on:false,x:0,y:0,type:"n"}
 const checkPreviousState=()=>{
     if(previousState.on){
         if(previousState.type=="s")
-            putStink(previousState.x,previousState.y)
+            putStink(previousState.x,previousState.y,true)
         else
-            putPit(previousState.x,previousState.y)
+            putBreeze(previousState.x,previousState.y,true)
     }
     previousState.on=false
 }
 const validateMove=()=>{
     checkPreviousState()
-    
     if(position.x==wumpusPos.x && position.y==wumpusPos.y)
         alert("You got Eaten")
-    else if (position.x==goldPos.x && position.y==goldPos.y)
+    else if (position.x==goldPos.x && position.y==goldPos.y){
+        gold.onload=()=>ctx.drawImage(gold,goldPos.x*cellSize,goldPos.y*cellSize,cellSize,cellSize)
         alert("You found Gold !! \n You have won")
+    }
     else if (position.x==pitPos.x && position.y==pitPos.y)
         alert("Falled into a pit")
     else if([...stinkSet].some(pos => pos.x === position.x && pos.y === position.y)) {
@@ -69,7 +70,7 @@ dude.onload = function() {
         }
 
 function putWumpus(){
-    ctx.drawImage(wumpus, wumpusPos.x * cellSize, wumpusPos.y * cellSize, cellSize, cellSize);
+    // ctx.drawImage(wumpus, wumpusPos.x * cellSize, wumpusPos.y * cellSize, cellSize, cellSize);
     
     if (wumpusPos.x < 3)
         putStink(wumpusPos.x + 1, wumpusPos.y);
@@ -81,7 +82,7 @@ function putWumpus(){
         putStink(wumpusPos.x, wumpusPos.y - 1);
 }
 function putPit() {
-    ctx.drawImage(pit, pitPos.x * cellSize, pitPos.y * cellSize, cellSize, cellSize);
+    // ctx.drawImage(pit, pitPos.x * cellSize, pitPos.y * cellSize, cellSize, cellSize);
 
     if (pitPos.x < 3)
         putBreeze(pitPos.x + 1, pitPos.y);
@@ -93,17 +94,20 @@ function putPit() {
         putBreeze(pitPos.x, pitPos.y - 1);
 }
 
-const putBreeze = (x, y) => {
+const putBreeze = (x, y,overide=false) => {
     breezeSet.add({x:x,y:y})
+    if(overide)
     ctx.drawImage(breeze, x * cellSize, y * cellSize, cellSize, cellSize);
 };
 
 pit.onload = putPit;
 wumpus.onload = putWumpus;
-gold.onload=()=>ctx.drawImage(gold,goldPos.x*cellSize,goldPos.y*cellSize,cellSize,cellSize)
+// gold.onload=()=>ctx.drawImage(gold,goldPos.x*cellSize,goldPos.y*cellSize,cellSize,cellSize)
 
-const putStink=(x,y)=>{
+const putStink=(x,y,overide=false)=>{
     stinkSet.add({x:x,y:y})
+
+    if(overide)
         ctx.drawImage(stink,x*cellSize,y*cellSize,cellSize,cellSize);
 
 }
@@ -112,7 +116,7 @@ function down(){
     if(position.y<3){
         clearPrevious()
         position.y=position.y+1
-       
+
         ctx.drawImage(dude, position.x*cellSize, position.y*cellSize, cellSize, cellSize);
         validateMove()
     }
