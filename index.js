@@ -1,6 +1,6 @@
 const canvas = document.getElementsByTagName('canvas')[0];
 const text=document.getElementsByTagName("p")[0]
-let overide=false
+
 const ctx = canvas.getContext('2d',{willReadFrequently:true});
 const gridSize = 4;
 const cellSize = canvas.width / gridSize;
@@ -44,9 +44,6 @@ const validateMove=()=>{
         alert("You got Eaten")
     else if (position.x==goldPos.x && position.y==goldPos.y){
         gold.onload=()=>ctx.drawImage(gold,goldPos.x*cellSize,goldPos.y*cellSize,cellSize,cellSize)
-        overide=true
-        putWumpus()
-        putPit()
         alert("You found Gold !! \n You have won")
     }
     else if (position.x==pitPos.x && position.y==pitPos.y)
@@ -73,9 +70,7 @@ dude.onload = function() {
         }
 
 function putWumpus(){
-    if(overide==true){
-        ctx.drawImage(wumpus, wumpusPos.x * cellSize, wumpusPos.y * cellSize, cellSize, cellSize);
-    }
+    // ctx.drawImage(wumpus, wumpusPos.x * cellSize, wumpusPos.y * cellSize, cellSize, cellSize);
     
     if (wumpusPos.x < 3)
         putStink(wumpusPos.x + 1, wumpusPos.y);
@@ -87,8 +82,7 @@ function putWumpus(){
         putStink(wumpusPos.x, wumpusPos.y - 1);
 }
 function putPit() {
-    if(overide==true)
-    ctx.drawImage(pit, pitPos.x * cellSize, pitPos.y * cellSize, cellSize, cellSize);
+    // ctx.drawImage(pit, pitPos.x * cellSize, pitPos.y * cellSize, cellSize, cellSize);
 
     if (pitPos.x < 3)
         putBreeze(pitPos.x + 1, pitPos.y);
@@ -100,9 +94,9 @@ function putPit() {
         putBreeze(pitPos.x, pitPos.y - 1);
 }
 
-const putBreeze = (x, y) => {
+const putBreeze = (x, y,overide=false) => {
     breezeSet.add({x:x,y:y})
-    if(overide==true)
+    if(overide)
     ctx.drawImage(breeze, x * cellSize, y * cellSize, cellSize, cellSize);
 };
 
@@ -110,10 +104,10 @@ pit.onload = putPit;
 wumpus.onload = putWumpus;
 // gold.onload=()=>ctx.drawImage(gold,goldPos.x*cellSize,goldPos.y*cellSize,cellSize,cellSize)
 
-const putStink=(x,y)=>{
+const putStink=(x,y,overide=false)=>{
     stinkSet.add({x:x,y:y})
 
-    if(overide==true)
+    if(overide)
         ctx.drawImage(stink,x*cellSize,y*cellSize,cellSize,cellSize);
 
 }
